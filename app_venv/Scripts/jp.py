@@ -1,4 +1,4 @@
-#!C:\Users\Shawal Mbalire\OneDrive\Documents\GitHub\cit_dissertation_streamlit\app_venv\Scripts\python.exe
+#!D:\cit_dissertation_streamlit\app_venv\Scripts\python.exe
 
 import sys
 import json

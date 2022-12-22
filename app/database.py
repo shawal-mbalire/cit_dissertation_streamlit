@@ -1,7 +1,7 @@
 import boto3
-from dotenv import load_dotenv
+import hashlib
+from env import AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY
 
-load_dotenv('.env')
 
 # Connect to the DynamoDB database
 dynamodb = boto3.resource(
@@ -10,15 +10,12 @@ dynamodb = boto3.resource(
     aws_access_key_id=AWS_ACCESS_KEY,
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY
 )
-table = dynamodb.Table('users')
+table = dynamodb.Table('users')# type: ignore
 """
-passw='Namaganda.7'
-encoded_password = passw.encode('utf-8')
-password = hashlib.sha256(encoded_password).hexdigest()
 table.put_item(
    Item={
         'username': 'janedoe',
-        'password': password,
+        'password': hashlib.sha256('Namaganda.7'.encode('utf-8')).hexdigest(),
         "age": 20,
         "email": "mbalireshawal@gmail.com",
         "gender": "male",
@@ -31,6 +28,7 @@ table.put_item(
     }
 )"""
 def get_user(username,password):
+    """Returns user dictionary if user exists, else returns None"""
     response = table.get_item(
         Key={
             'username': username,
@@ -39,16 +37,16 @@ def get_user(username,password):
     )
     try:
         user = response['Item']
-        print(user)
+        return user
     except:
-        user = None
+        return None
 
 
 def insert_user(username, password,email,age,gender,insurance,surname,other_name,phone_number,role):
     table.put_item(
    Item={
         'username': username,
-        'password': password,
+        'password': hashlib.sha256(password.encode('utf-8')).hexdigest(),
         "age": age,
         "email": email,
         "gender": gender,
@@ -61,12 +59,18 @@ def insert_user(username, password,email,age,gender,insurance,surname,other_name
     }
 )
 
-
 def fetch_all_users():
+    """returns list of user dictionaries"""
     response=table.scan()
     return response['Items']
+"""print(get_user(
+    username='janedoe',
+    password=hashlib.sha256('Namaganda.7'.encode('utf-8')).hexdigest()
+))"""
 
-print(fetch_all_users())
-
-def add_diagnosis():
+def add_diagnosis(username,password,note):
+    user = get_user(username,password)
+    #records = user['records']
+    #add note to records
     pass
+
